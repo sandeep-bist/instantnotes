@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>InstantNotes - {{ note_id }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+</head>
+<body>
+    <!-- LOGO -->
+    <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+        <a href="/" style="text-decoration: none;">
+            <div class="logo">
+                <span style="font-size: 28px; font-weight: 700; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">IN</span>
+                <span style="font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.8); position: relative; top: -2px; left: -4px;">stant</span>
+                <span style="font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.8);">Notes</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="editor-container">
+            <div class="editor-header">
+                <a href="/" class="btn-secondary">← New Note</a>
+                <div class="share-section">
+                    <strong style="color: white;">Share:</strong>
+                    <span class="share-url">{{ request.host_url }}{{ note_id }}</span>
+                    <button onclick="copyUrl()" class="copy-btn">📋 Copy</button>
+                </div>
+            </div>
+            <textarea id="note" placeholder="Start typing... Changes sync instantly across all open tabs! ✨">{{ existing_content }}</textarea>
+            <div class="status">
+                <span id="status">Connected ✓</span>
+                <span id="users" style="color: rgba(255,255,255,0.8);">Live editing enabled</span>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/editor.js"></script>
+    <script>
+        window.noteId = '{{ note_id }}';
+        window.hostUrl = '{{ request.host_url }}';
+    </script>
+</body>
+</html>

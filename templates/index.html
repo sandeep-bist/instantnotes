@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>InstantNotes - Real-time Collaborative Notepad</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- LOGO -->
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+            <div class="logo">
+                <span style="font-size: 28px; font-weight: 700; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">IN</span>
+                <span style="font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.8); position: relative; top: -2px; left: -4px;">stant</span>
+                <span style="font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.8);">Notes</span>
+            </div>
+        </div>
+        
+        <div class="home-hero">
+            <h1>InstantNotes</h1>
+            <p>Professional real-time collaborative notepad. Share URL - edit together instantly.</p>
+            <button id="createNote" class="btn-primary">✨ Create New Note</button>
+            <div id="loading" style="display: none; margin-top: 30px;">
+                <p>Creating secure notepad... <span class="spinner"></span></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('createNote').addEventListener('click', function() {
+            const uid = Math.random().toString(36).substring(2, 10).toUpperCase();
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('createNote').style.display = 'none';
+            setTimeout(() => {
+                window.location.href = '/' + uid;
+            }, 800);
+        });
+    </script>
+</body>
+</html>
