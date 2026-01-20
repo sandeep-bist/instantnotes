@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 def init_db():
-    conn = sqlite3.connect('notes.db')
+    conn = sqlite3.connect('notess.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS notes
                  (id TEXT PRIMARY KEY, encrypted_data TEXT, 
@@ -19,7 +19,7 @@ def init_db():
     conn.close()
 
 def delete_note(note_id):
-    conn = sqlite3.connect('notes.db')
+    conn = sqlite3.connect('notess.db')
     c = conn.cursor()
     c.execute("DELETE FROM notes WHERE id=?", (note_id,))
     conn.commit()
@@ -34,15 +34,15 @@ def index():
 def editor(note_id):
     """Handles BOTH new notes and existing: /abc12345"""
     # Validate note_id format (8 chars alphanumeric)
-    if len(note_id) != 8 or not note_id.isalnum():
+    if len(note_id) < 3 or not note_id.isalnum():
         return "Invalid note ID", 404
     
-    conn = sqlite3.connect('notes.db')
+    conn = sqlite3.connect('notess.db')
     c = conn.cursor()
     c.execute("SELECT encrypted_data FROM notes WHERE id=?", (note_id,))
     result = c.fetchone()
     conn.close()
-    
+    print(result,"-------------------")
     existing_content = ""
     if result:
         existing_content = "✅ Note loaded and synced across all tabs!"
@@ -51,14 +51,23 @@ def editor(note_id):
 
 
 
+# @socketio.on('join_note')
+# def on_join(data):
+#     note_id = data['note_id']
+#     join_room(note_id)
+#     emit('status', {'msg': f'User joined {note_id}'}, room=note_id)
+
 @socketio.on('join_note')
 def on_join(data):
+    print(f"🔗 JOIN: {data}")  # Terminal check
     note_id = data['note_id']
     join_room(note_id)
     emit('status', {'msg': f'User joined {note_id}'}, room=note_id)
 
 @socketio.on('text_change')
 def handle_text_change(data):
+    print(f"📝 CHANGE: {data['note_id'][:10]}...") 
+    print("getiiiiiiiii----***",data)
     note_id = data['note_id']
     content = data['content']
     password = data.get('password', '')
@@ -66,7 +75,7 @@ def handle_text_change(data):
     # Save to DB
     import hashlib
     password_hash = hashlib.sha256(password.encode()).hexdigest() if password else None
-    conn = sqlite3.connect('notes.db')
+    conn = sqlite3.connect('notess.db')
     c = conn.cursor()
     expires_at = int((datetime.datetime.now() + timedelta(hours=24)).timestamp())
     c.execute("""INSERT OR REPLACE INTO notes VALUES (?, ?, ?, ?, ?, ?)""",
